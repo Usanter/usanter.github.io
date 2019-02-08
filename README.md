@@ -1,2 +1,0 @@
-# usanter.github.io
-website
