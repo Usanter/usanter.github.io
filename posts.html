@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Blog — Thomas Rolland</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+      :root { --bg:#f6f7f9; --surface: rgba(255,255,255,.25); --text:#0e1116; --muted:#5a6472; --outline: rgba(255,255,255,.4); --radius: clamp(16px, 2.2vw, 24px);} 
+      body{ margin:0; font-family:'Inter',system-ui,-apple-system; background:var(--bg); color:var(--text);} 
+      .container{ max-width:1040px; margin:0 auto; padding:32px 20px 64px;}
+      header.site-header{ position:sticky; top:0; z-index:10; display:flex; align-items:center; justify-content:space-between; gap:16px; padding:10px 14px; background:var(--surface); border:1px solid var(--outline); backdrop-filter: blur(16px) saturate(140%); border-radius:0 0 var(--radius) var(--radius);} 
+      .brand{ font-weight:700; letter-spacing:-0.02em; font-size:clamp(18px,1.4vw,22px); text-decoration:none; color:inherit; }
+      nav a{ color:var(--muted); text-decoration:none; margin-left:12px; font-size:14px; padding:8px 10px; border-radius:12px; }
+      nav a:hover{ background:rgba(255,255,255,.5); color:var(--text);} 
+      .card{ background: var(--surface); border:1px solid var(--outline); border-radius:var(--radius); box-shadow:0 8px 24px rgba(0,0,0,.12); backdrop-filter: blur(16px) saturate(140%);} 
+      .section-title{ display:flex; align-items:center; justify-content:space-between; margin:16px 0 14px; }
+      .section-title h1{ margin:0; font-size:clamp(22px,3vw,28px);} .section-title p{ margin:0; color:var(--muted); font-size:14px;}
+      .grid-3{ display:grid; grid-template-columns: repeat(3, 1fr); gap:clamp(12px,2.2vw,20px);} @media(max-width:860px){ .grid-3{ grid-template-columns: 1fr; }}
+      .project.card{ padding:18px; }
+      .topline{ display:flex; justify-content:space-between; gap:8px; align-items:center; margin-bottom:8px;}
+      .pill{ display:inline-block; padding:4px 10px; border-radius:999px; border:1px solid var(--outline); background:rgba(255,255,255,.5); font-size:12px; color:var(--muted);} 
+      .tag{ display:inline-block; font-size:12px; color:var(--muted); background:rgba(255,255,255,.6); border:1px solid var(--outline); padding:4px 8px; border-radius:999px; margin-right:6px; }
+      .btn{ display:inline-flex; align-items:center; gap:8px; border:1px solid var(--outline); background:rgba(255,255,255,.5); padding:10px 14px; border-radius:12px; color:var(--text); text-decoration:none; font-weight:600; }
+      .btn:hover{ transform:translateY(-1px);} 
+      .actions{ display:flex; gap:8px; margin-top:10px; }
+      .post.card{ padding: clamp(20px, 3.6vw, 30px); margin-top:16px; }
+      .prose p{ line-height:1.6; color:var(--muted);} .prose pre{ overflow:auto; padding:12px; background:rgba(0,0,0,.06); border-radius:12px; }
+      footer{ text-align:center; color:var(--muted); padding:20px 0; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header class="site-header">
+        <a class="brand" href="index.html">← Home</a>
+        <nav><a href="#list">All Posts</a></nav>
+      </header>
+
+      <section id="list">
+        <div class="section-title">
+          <h1>All Blog Posts</h1>
+          <p>Titles, dates, and tags</p>
+        </div>
+        <div id="blog-list" class="grid-3"></div>
+      </section>
+
+      <article id="post-view" class="post card" hidden>
+        <div class="topline"><span class="pill" id="post-date"></span><span class="pill">Blog</span></div>
+        <h2 class="post-title" id="post-title"></h2>
+        <div class="tags" id="post-tags"></div>
+        <div class="prose" id="post-content"></div>
+        <div class="actions">
+          <button class="btn" id="post-back" type="button">← Back to list</button>
+          <a class="btn" id="post-raw" href="#" target="_blank" rel="noopener">Open raw (.md)</a>
+        </div>
+      </article>
+
+      <footer>
+        <small>© <span id="year"></span> Thomas Rolland</small>
+      </footer>
+    </div>
+
+    <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+
+    <script>
+      (async function(){
+        const listEl = document.getElementById('blog-list');
+        const viewEl = document.getElementById('post-view');
+        const titleEl = document.getElementById('post-title');
+        const dateEl = document.getElementById('post-date');
+        const tagsEl = document.getElementById('post-tags');
+        const contentEl = document.getElementById('post-content');
+        const backBtn = document.getElementById('post-back');
+        const rawLink = document.getElementById('post-raw');
+
+        function escapeHtml(s){ return s.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+        function parseFrontmatter(text){
+          let meta = {}; let body = text;
+          if (text.startsWith('---')){
+            const end = text.indexOf('\n---', 3);
+            if (end !== -1){
+              const block = text.slice(3, end).trim();
+              body = text.slice(end + 4).trim();
+              for (const line of block.split('\n')){
+                const idx = line.indexOf(':');
+                if (idx > -1){ const k = line.slice(0, idx).trim(); const v = line.slice(idx + 1).trim(); meta[k] = v.replace(/^\"|\"$/g, ''); }
+              }
+            }
+          }
+          if (!meta.title){ const m = body.match(/^#\s+(.+)$/m); if (m) meta.title = m[1].trim(); }
+          if (!meta.summary){ const paras = body.split(/\n\s*\n/).map(s => s.trim()).filter(Boolean); const firstPara = paras.find(p => !p.startsWith('#')); if (firstPara) meta.summary = firstPara.replace(/^>\s*/,''); }
+          return { meta, body };
+        }
+        function mdToHtml(md){
+          const fenceRegex = /```([\w-]*)\n([\s\S]*?)```/g; const fences = [];
+          md = md.replace(fenceRegex, (_, lang, code) => { const i = fences.push({ lang, code }) - 1; return `§§FENCE${i}§§`; });
+          const lines = md.split(/\r?\n/); const out = []; let inOl=false, inUl=false; const close=()=>{ if(inOl){out.push('</ol>'); inOl=false;} if(inUl){out.push('</ul>'); inUl=false;} };
+          for (let raw of lines){ let line = raw.trimEnd(); if (!line){ close(); out.push(''); continue; }
+            const h = line.match(/^(#{1,6})\s+(.*)$/); if (h){ close(); const lvl=h[1].length; out.push(`<h${lvl}>${escapeHtml(h[2])}</h${lvl}>`); continue; }
+            const ol = line.match(/^\d+\.\s+(.*)$/); if (ol){ if(!inOl){ close(); out.push('<ol>'); inOl=true; } out.push(`<li>${escapeHtml(ol[1])}</li>`); continue; }
+            const ul = line.match(/^[-*]\s+(.*)$/); if (ul){ if(!inUl){ close(); out.push('<ul>'); inUl=true; } out.push(`<li>${escapeHtml(ul[1])}</li>`); continue; }
+            const bq = line.match(/^>\s?(.*)$/); if (bq){ close(); out.push(`<blockquote><p>${escapeHtml(bq[1])}</p></blockquote>`); continue; }
+            close(); out.push(`<p>${escapeHtml(line)}</p>`);
+          }
+          let html = out.join('\n');
+          html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                     .replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g, '<em>$1</em>')
+                     .replace(/`([^`]+)`/g, '<code>$1</code>')
+                     .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+          html = html.replace(/§§FENCE(\d+)§§/g, (_, i) => { const f = fences[Number(i)]; return `<pre><code class="language-${escapeHtml(f.lang||'')}">${escapeHtml(f.code)}</code></pre>`; });
+          return html;
+        }
+
+        async function showPost(path){
+          try{
+            const res = await fetch(path); if (!res.ok) throw new Error('HTTP '+res.status);
+            const text = await res.text();
+            const { meta, body } = parseFrontmatter(text);
+            titleEl.textContent = meta.title || path; dateEl.textContent = meta.date || '';
+            tagsEl.innerHTML = (meta.tags||'').split(',').map(t => t.trim()).filter(Boolean).map(t => `<span class="tag">${t}</span>`).join('');
+            contentEl.innerHTML = mdToHtml(body); rawLink.href = path;
+            listEl.hidden = true; viewEl.hidden = false;
+            if (!location.hash.startsWith('#post=')) history.pushState({ post: path }, '', `#post=${encodeURIComponent(path)}`);
+            viewEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          } catch(err){ window.open(path, '_blank'); }
+        }
+        function hidePost(){ viewEl.hidden = true; listEl.hidden = false; }
+
+        // Build list from manifest
+        let posts = [];
+        try {
+          const res = await fetch('posts/posts.json', { cache: 'no-store' });
+          if (res.ok) posts = await res.json();
+        } catch (_) {}
+
+        for (const p of posts){
+          const article = document.createElement('article');
+          article.className = 'project card';
+          const tagsHtml = (Array.isArray(p.tags)? p.tags : String(p.tags||'').split(',')).map(t => String(t).trim()).filter(Boolean).map(t => `<span class="tag">${t}</span>`).join('');
+          article.innerHTML = `
+            <div class="topline"><span class="pill">${p.date || ''}</span><span class="pill">Blog</span></div>
+            <h3>${p.title || p.path}</h3>
+            ${p.summary ? `<p>${p.summary}</p>` : ''}
+            ${tagsHtml ? `<div class="tags">${tagsHtml}</div>` : ''}
+            <div class="actions"><button class="btn read-post" data-path="${p.path}">Read</button><a class="btn" href="${p.path}" target="_blank" rel="noopener">Raw (.md)</a></div>
+          `;
+          listEl.appendChild(article);
+        }
+
+        listEl.addEventListener('click', (e) => {
+          const btn = e.target.closest('.read-post'); if (btn){ e.preventDefault(); showPost(btn.dataset.path); }
+        }, true);
+        backBtn?.addEventListener('click', () => { hidePost(); history.pushState({}, '', '#list'); });
+        window.addEventListener('hashchange', () => { const m = location.hash.match(/#post=([^&]+)/); if (m) showPost(decodeURIComponent(m[1])); else hidePost(); });
+        const m = location.hash.match(/#post=([^&]+)/); if (m) showPost(decodeURIComponent(m[1]));
+      })();
+    </script>
+  </body>
+  </html>
+

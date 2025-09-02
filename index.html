@@ -245,6 +245,7 @@
           <h2>Blog</h2>
           <p>Explainers & deep dives</p>
         </div>
+        <div class="cta-row"><a class="btn" href="posts.html">View all posts</a></div>
         <div id="blog-list" class="grid-3" data-source="md"></div>
         <article id="post-view" class="post card" hidden>
           <div class="topline"><span class="pill" id="post-date"></span><span class="pill">Blog</span></div>
@@ -397,7 +398,7 @@
   
   <!-- Simple client-side blog list from Markdown files -->
   <script>
-    (function(){
+    (async function(){
       let posts = [ { path: 'blog-soft-liquid-gradient.md' } ];
       // Try loading a manifest if present
       try {
@@ -448,7 +449,7 @@
           <h3>${title || path}</h3>
           <p>${summary || ''}</p>
           ${tagsHtml ? `<div class=\"tags\">${tagsHtml}</div>` : ''}
-          <div class="actions"><a class="btn" href="${path}" target="_blank" rel="noopener">Read (.md)</a></div>
+          <div class="actions"><button class="btn read-post" data-path="${path}">Read</button><a class="btn" href="${path}" target="_blank" rel="noopener">Raw (.md)</a></div>
         `;
         return article;
       }
@@ -544,15 +545,7 @@
       }
       function hidePost(){ viewEl.hidden = true; listEl.hidden = false; }
 
-      // Transform existing cards: replace Read links with buttons
-      function transformCards(){
-        listEl.querySelectorAll('.actions a.btn').forEach(a => {
-          const path = a.getAttribute('href');
-          const btn = document.createElement('button'); btn.className = 'btn read-post'; btn.textContent = 'Read'; btn.dataset.path = path;
-          a.replaceWith(btn);
-        });
-      }
-      transformCards();
+      // Cards already include a Read button created by the first script
 
       listEl.addEventListener('click', (e) => {
         const btn = e.target.closest('.read-post'); if (btn){ e.preventDefault(); showPost(btn.dataset.path); }
