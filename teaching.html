@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Teaching — Thomas Rolland</title>
+    <meta name="description" content="Teaching: courses, mentoring, and materials." />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+      :root { --bg:#f6f7f9; --surface:rgba(255,255,255,.25); --text:#0e1116; --muted:#5a6472; --outline:rgba(255,255,255,.4); --radius: clamp(16px, 2.2vw, 24px); --shadow: 0 1px 1px rgba(0,0,0,.05), 0 10px 30px rgba(12,20,33,.12); }
+      body{ margin:0; font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; background:var(--bg); color:var(--text); }
+      .backdrop{ position:fixed; inset:-20% -10% auto -10%; height:60vh; z-index:-2; background: radial-gradient(42% 60% at 20% 30%, hsla(218,86%,55%,.18), transparent 55%), radial-gradient(40% 55% at 78% 25%, hsla(266,85%,62%,.16), transparent 60%), radial-gradient(70% 70% at 50% 90%, hsla(194,86%,54%,.14), transparent 60%); filter: blur(40px) saturate(120%); }
+      .container{ max-width:1040px; margin:0 auto; padding:32px 20px 64px; }
+      #liquid-bg { position: fixed; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; display: block; }
+      header.site-header{ position:sticky; top:0; z-index:1000; display:flex; align-items:center; justify-content:space-between; gap:16px; padding:10px 14px; background:var(--surface); border:1px solid var(--outline); backdrop-filter: blur(16px) saturate(140%); -webkit-backdrop-filter: blur(16px) saturate(140%); box-shadow:0 8px 24px rgba(0,0,0,.12); border-radius:0 0 var(--radius) var(--radius); }
+      .brand{ font-weight:700; letter-spacing:-.02em; font-size:clamp(18px,1.4vw,22px); opacity:.9; text-decoration:none; color:inherit; }
+      nav a{ color:var(--muted); text-decoration:none; margin-left:18px; font-size:14px; padding:10px 12px; border-radius:12px; }
+      nav a:hover{ background:rgba(255,255,255,.5); color:var(--text); }
+      .card{ position:relative; border-radius:var(--radius); overflow:clip; background:var(--surface); border:1px solid var(--outline); backdrop-filter: blur(16px) saturate(140%); -webkit-backdrop-filter: blur(16px) saturate(140%); box-shadow:0 8px 24px rgba(0,0,0,.12); }
+      section{ margin-top:clamp(28px,6vw,72px); }
+      .section-title{ display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+      .section-title h1{ margin:0; font-size:clamp(20px,2.6vw,28px); letter-spacing:-.01em; }
+      .section-title p{ margin:0; color:var(--muted); font-size:14px; }
+      .entry{ padding:18px; }
+      .entry + .entry{ border-top:1px dashed var(--outline); }
+      .entry h3{ margin:6px 0; font-size:16px; }
+      .entry p{ margin:0 0 6px; color:var(--muted); font-size:14px; }
+      .pill{ display:inline-block; border-radius:999px; padding:6px 10px; font-size:12px; border:1px solid var(--outline); color:var(--muted); }
+      .topline{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+      .actions{ display:flex; gap:8px; margin-top:8px; }
+      .btn{ position:relative; display:inline-flex; align-items:center; gap:10px; border:1px solid var(--outline); background:rgba(255,255,255,0.4); padding:8px 12px; border-radius:14px; color:var(--text); text-decoration:none; font-weight:600; box-shadow:var(--shadow); }
+    </style>
+  </head>
+  <body>
+    <div class="backdrop" aria-hidden="true"></div>
+    <canvas id="liquid-bg" aria-hidden="true"></canvas>
+    <div class="container">
+      <header class="site-header">
+        <a class="brand" href="index.html">Thomas Rolland — AI Research Scientist</a>
+        <nav aria-label="Primary">
+          <a href="index.html#about">About</a>
+          <a href="publications.html">Publications</a>
+          <a href="activities.html">Activities</a>
+          <a href="teaching.html">Teaching</a>
+          <a href="index.html#blog">Blog</a>
+          <a href="index.html#contact">Contact</a>
+        </nav>
+      </header>
+
+      <section>
+        <div class="section-title">
+          <h1>Teaching</h1>
+          <p>Courses, mentoring, materials</p>
+        </div>
+        <article class="card">
+          <div class="entry">
+            <div class="topline"><span class="pill">2025</span><span class="pill">Course</span></div>
+            <h3>Speech Processing — Guest Lectures</h3>
+            <p>Slides and assignments to be shared here.</p>
+            <div class="actions"><a class="btn" href="#">Syllabus</a><a class="btn" href="#">Slides</a></div>
+          </div>
+          <div class="entry">
+            <div class="topline"><span class="pill">2024</span><span class="pill">Mentoring</span></div>
+            <h3>Graduate Projects Supervision</h3>
+            <p>Co‑supervised projects on PEFT for ASR and TTS augmentation.</p>
+          </div>
+        </article>
+      </section>
+
+      <footer style="color:var(--muted); font-size:13px; padding:28px 4px 0; text-align:center;">
+        <small>© <span id="year"></span> Thomas Rolland.</small>
+      </footer>
+    </div>
+    <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+    <!-- Three.js pastel liquid background (same as index) -->
+    <script type="module">
+      import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
+      const CONFIG = { colors: ['#FFFFFF', '#FEFCFB', '#F0F4FF', '#F3E8FF', '#FEF9F6'], speed: 0.08, blur: 2.6, grain: 0.008, dprMax: 2.0 };
+      const canvas = document.getElementById('liquid-bg');
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+      const DPR = Math.min(window.devicePixelRatio || 1, CONFIG.dprMax);
+      renderer.setPixelRatio(DPR);
+      renderer.setClearColor(0xffffff, 1);
+      const scene = new THREE.Scene();
+      const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+      const vertexShader = `varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position, 1.0); }`;
+      const fragmentShader = `
+        precision highp float; uniform float uTime; uniform vec2 uResolution; uniform vec3 uColors[5];
+        uniform float uBlur; uniform float uGrain; uniform float uSpeed; float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7)))*43758.5453123);} 
+        float noise(vec2 p){ vec2 i=floor(p), f=fract(p); float a=hash(i), b=hash(i+vec2(1.,0.)), c=hash(i+vec2(0.,1.)), d=hash(i+vec2(1.,1.)); vec2 u=f*f*(3.-2.*f); return mix(a,b,u.x)+(c-a)*u.y*(1.-u.x)+(d-b)*u.x*u.y; }
+        float fbm(vec2 p){ float v=0., a=.5; for(int i=0;i<5;i++){ v+=a*noise(p); p=p*2.+vec2(10.5); a*=.5;} return v; }
+        float metaball(vec2 p, vec2 c, float r){ float d=length(p-c); return r*r/(d*d+1e-3);} 
+        vec3 multiMix(float t, vec3[5] cols){ if(t<.25) return mix(cols[0],cols[1],smoothstep(0.,.25,t)); else if(t<.5) return mix(cols[1],cols[2],smoothstep(.25,.5,t)); else if(t<.75) return mix(cols[2],cols[3],smoothstep(.5,.75,t)); else return mix(cols[3],cols[4],smoothstep(.75,1.,t)); }
+        void main(){ vec2 uv = gl_FragCoord.xy / uResolution; vec2 p = (uv - 0.5) * 2.0; p.x *= uResolution.x / uResolution.y; float t = uTime * uSpeed;
+          vec2 warp = vec2(fbm(p*1.2 + t*.30), fbm(vec2(p.y,p.x)*1.5 - t*.25)); p += .25 * (warp - .5);
+          vec2 c1=.70*vec2(sin(t*.70+0.), cos(t*.60+1.2)); vec2 c2=.80*vec2(cos(t*.55+2.2), sin(t*.50+.3)); vec2 c3=.90*vec2(sin(t*.40+4.), sin(t*.65+2.)); vec2 c4=.60*vec2(cos(t*.33-1.), cos(t*.47-2.4)); vec2 c5=.75*vec2(sin(t*.29-.5), cos(t*.41+.7));
+          float field=0.; field+=metaball(p,c1,.65); field+=metaball(p,c2,.70); field+=metaball(p,c3,.60); field+=metaball(p,c4,.68); field+=metaball(p,c5,.62); field*=.22;
+          float m=smoothstep(.35,.75,field); float r=uBlur/uResolution.y; vec2 off[8]; off[0]=vec2( r,0.); off[1]=vec2(-r,0.); off[2]=vec2(0., r); off[3]=vec2(0.,-r); off[4]=vec2( r, r); off[5]=vec2(-r, r); off[6]=vec2( r,-r); off[7]=vec2(-r,-r);
+          float accum=m; for(int i=0;i<8;i++){ vec2 pp=p+off[i]; float f2=0.; f2+=metaball(pp,c1,.65); f2+=metaball(pp,c2,.70); f2+=metaball(pp,c3,.60); f2+=metaball(pp,c4,.68); f2+=metaball(pp,c5,.62); f2*=.22; accum+=smoothstep(.35,.75,f2);} 
+          float blurred=accum/9.; float n=fbm(p*1.8 + t*.15); float mixv=clamp(blurred + (n-.5)*.25, 0., 1.); vec3 col=multiMix(mixv, uColors); float vignette=smoothstep(1.4,.2,length(p)); col*=mix(.99,1.03,vignette);
+          float g=(hash(uv+fract(t))-.5)*uGrain; col+=g; gl_FragColor=vec4(col,1.);
+        }`;
+      const material = new THREE.ShaderMaterial({
+        uniforms: { uTime:{value:0}, uResolution:{value:new THREE.Vector2(1,1)}, uColors:{ value: CONFIG.colors.map(c => new THREE.Color(c)) }, uBlur:{value:CONFIG.blur}, uGrain:{value:CONFIG.grain}, uSpeed:{value:CONFIG.speed} },
+        vertexShader: vertexShader, fragmentShader: fragmentShader, depthTest: false, depthWrite: false,
+      });
+      const quad = new THREE.Mesh(new THREE.PlaneGeometry(2,2), material); scene.add(quad);
+      function resize(){ const w = window.innerWidth, h = window.innerHeight; renderer.setSize(w, h, false); material.uniforms.uResolution.value.set(w * DPR, h * DPR); }
+      window.addEventListener('resize', resize, { passive: true }); resize();
+      const media = window.matchMedia('(prefers-reduced-motion: reduce)'); function updateSpeed(){ material.uniforms.uSpeed.value = media.matches ? CONFIG.speed * 0.08 : CONFIG.speed; } media.addEventListener?.('change', updateSpeed); updateSpeed();
+      const clock = new THREE.Clock(); function tick(){ material.uniforms.uTime.value = clock.getElapsedTime(); renderer.render(scene, camera); requestAnimationFrame(tick); } tick();
+      document.addEventListener('visibilitychange', ()=>{ if (document.hidden) clock.stop(); else clock.start(); });
+    </script>
+  </body>
+</html>
