@@ -175,7 +175,7 @@
           <p>Selected work</p>
         </div>
         <div class="card pub-intro">
-          <p>Peer‑reviewed and preprint work across ASR, PEFT, and evaluation. Below are highlights — see the dedicated page for the full list and resources.</p>
+          <p>Peer-reviewed and preprint work across ASR, PEFT, and evaluation. See the dedicated page for the full list.</p>
           <div class="cta-row"><a class="btn" href="publications.html">View all publications</a></div>
         </div>
       </section>
@@ -260,7 +260,7 @@
       </section>
 
       <footer>
-        <small>© <span id="year"></span> Thomas Rolland. Built with semantic HTML.</small>
+        <small>© <span id="year">2025</span> Thomas Rolland.</small>
       </footer>
     </div>
 
@@ -436,9 +436,10 @@
       function renderCard({ title, date, summary, path, tags }){
         const article = document.createElement('article');
         article.className = 'project card';
+        const href = 'blog.html#post=' + encodeURIComponent(path);
         article.innerHTML = `
           <div class="topline"><span class="pill">${date || ''}</span><span class="pill">Blog</span></div>
-          <h3><a href="#" class="open-post" data-path="${path}" style="text-decoration:none; color:inherit;">${title || path}</a></h3>
+          <h3><a href="${href}" style="text-decoration:none; color:inherit;">${title || path}</a></h3>
         `;
         return article;
       }

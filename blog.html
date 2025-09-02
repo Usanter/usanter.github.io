@@ -74,11 +74,14 @@
 
       <article id="post-view" class="post card" hidden>
         <div class="topline"><span class="pill" id="post-date"></span><span class="pill">Blog</span></div>
+        <div class="actions" style="margin: 4px 0 8px;">
+          <a class="btn" id="post-back-top" href="#list">← Back to all posts</a>
+        </div>
         <h2 class="post-title" id="post-title"></h2>
         <div class="tags" id="post-tags"></div>
         <div class="prose" id="post-content"></div>
         <div class="actions">
-          <button class="btn" id="post-back" type="button">← Back to list</button>
+          <button class="btn" id="post-back" type="button">← Back to all posts</button>
         </div>
       </article>
 
@@ -136,6 +139,7 @@
         const tagsEl = document.getElementById('post-tags');
         const contentEl = document.getElementById('post-content');
         const backBtn = document.getElementById('post-back');
+        const backTopBtn = document.getElementById('post-back-top');
 
         function escapeHtml(s){ return s.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
         function parseFrontmatter(text){
@@ -210,7 +214,9 @@
         }
         function hidePost(){ viewEl.hidden = true; listEl.hidden = false; }
         listEl.addEventListener('click', (e) => { const btn = e.target.closest('.read-post'); if (btn){ e.preventDefault(); showPost(btn.dataset.path); } }, true);
-        backBtn?.addEventListener('click', () => { hidePost(); history.pushState({}, '', '#list'); });
+        const goBack = () => { hidePost(); history.pushState({}, '', '#list'); document.getElementById('list').scrollIntoView({ behavior:'smooth', block:'start' }); };
+        backBtn?.addEventListener('click', goBack);
+        backTopBtn?.addEventListener('click', (e) => { e.preventDefault(); goBack(); });
         addEventListener('hashchange', () => { const m = location.hash.match(/#post=([^&]+)/); if (m) showPost(decodeURIComponent(m[1])); else hidePost(); });
         const m = location.hash.match(/#post=([^&]+)/); if (m) showPost(decodeURIComponent(m[1]));
       })();
