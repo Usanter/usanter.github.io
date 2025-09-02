@@ -29,8 +29,22 @@
       .btn{ display:inline-flex; align-items:center; gap:8px; border:1px solid var(--outline); background:rgba(255,255,255,.5); padding:10px 14px; border-radius:12px; color:var(--text); text-decoration:none; font-weight:600; }
       .btn:hover{ transform:translateY(-1px);} 
       .actions{ display:flex; gap:8px; margin-top:10px; }
-      .post.card{ padding: clamp(20px, 3.6vw, 30px); margin-top:16px; }
-      .prose p{ line-height:1.6; color:var(--muted);} .prose pre{ overflow:auto; padding:12px; background:rgba(0,0,0,.06); border-radius:12px; }
+      .post.card{ padding: clamp(20px, 3.6vw, 30px); margin-top:16px; max-width: 860px; }
+      .post .post-title { margin: 6px 0 12px; font-size: clamp(22px,3.6vw,32px); letter-spacing:-0.01em; }
+      .prose { line-height: 1.7; color: var(--muted); font-size: 16px; }
+      .prose h1, .prose h2, .prose h3, .prose h4 { color: var(--text); margin: 22px 0 10px; line-height:1.25; }
+      .prose h1 { font-size: clamp(24px,4vw,34px); }
+      .prose h2 { font-size: clamp(20px,3vw,28px); }
+      .prose h3 { font-size: clamp(18px,2.4vw,22px); }
+      .prose p { margin: 10px 0; }
+      .prose ul, .prose ol { margin: 10px 0 10px 1.25em; }
+      .prose li { margin: 6px 0; }
+      .prose a { color: hsl(218,86%,45%); text-underline-offset: 2px; }
+      .prose blockquote { margin: 12px 0; padding: 10px 12px; border-left: 3px solid hsl(218,86%,55%); background: rgba(255,255,255,0.4); border-radius: 10px; }
+      .prose code { background: rgba(0,0,0,0.06); padding: 2px 6px; border-radius: 6px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: #2a2f3a; }
+      .prose pre { background: rgba(255,255,255,0.5); border: 1px solid var(--outline); border-radius: 12px; padding: 12px; overflow:auto; box-shadow: var(--shadow); }
+      .prose pre code { background: transparent; padding: 0; }
+      [hidden]{ display:none !important; }
       footer{ text-align:center; color:var(--muted); padding:20px 0; }
     </style>
   </head>
@@ -45,7 +59,7 @@
           <a href="publications.html">Publications</a>
           <a href="activities.html">Activities</a>
           <a href="teaching.html">Teaching</a>
-          <a href="posts.html">Blog</a>
+          <a href="blog.html">Blog</a>
           <a href="index.html#contact">Contact</a>
         </nav>
       </header>
@@ -65,7 +79,6 @@
         <div class="prose" id="post-content"></div>
         <div class="actions">
           <button class="btn" id="post-back" type="button">← Back to list</button>
-          <a class="btn" id="post-raw" href="#" target="_blank" rel="noopener">Open raw (.md)</a>
         </div>
       </article>
 
@@ -111,10 +124,9 @@
       addEventListener('resize', resize, {passive:true}); resize();
       const media = matchMedia('(prefers-reduced-motion: reduce)'); function updateSpeed(){ material.uniforms.uSpeed.value = media.matches ? CONFIG.speed*0.08 : CONFIG.speed; } media.addEventListener?.('change', updateSpeed); updateSpeed();
       const clock = new THREE.Clock(); (function loop(){ material.uniforms.uTime.value=clock.getElapsedTime(); renderer.render(scene,camera); requestAnimationFrame(loop); })();
-      document.addEventListener('visibilitychange', ()=>{ /* stop/start if needed */ });
     </script>
 
-    <!-- Blog loader: read posts.json and markdown -->
+    <!-- Blog loader: read posts.json and markdown into styled reader -->
     <script>
       (async function(){
         const listEl = document.getElementById('blog-list');
@@ -124,7 +136,6 @@
         const tagsEl = document.getElementById('post-tags');
         const contentEl = document.getElementById('post-content');
         const backBtn = document.getElementById('post-back');
-        const rawLink = document.getElementById('post-raw');
 
         function escapeHtml(s){ return s.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
         function parseFrontmatter(text){
@@ -176,10 +187,10 @@
           const tagsHtml = tags.map(t => String(t).trim()).filter(Boolean).map(t => `<span class="tag">${t}</span>`).join('');
           article.innerHTML = `
             <div class="topline"><span class="pill">${p.date || ''}</span><span class="pill">Blog</span></div>
-            <h3>${p.title || p.path}</h3>
+            <h3><a href="#post=${encodeURIComponent(p.path)}" style="text-decoration:none; color:inherit;">${p.title || p.path}</a></h3>
             ${p.summary ? `<p>${p.summary}</p>` : ''}
             ${tagsHtml ? `<div class="tags">${tagsHtml}</div>` : ''}
-            <div class="actions"><button class="btn read-post" data-path="${p.path}">Read</button><a class="btn" href="${p.path}" target="_blank" rel="noopener">Raw (.md)</a></div>
+            <div class="actions"><button class="btn read-post" data-path="${p.path}">Read</button></div>
           `;
           listEl.appendChild(article);
         }
@@ -191,11 +202,11 @@
             const { meta, body } = parseFrontmatter(text);
             titleEl.textContent = meta.title || path; dateEl.textContent = meta.date || '';
             tagsEl.innerHTML = (meta.tags||'').split(',').map(t => t.trim()).filter(Boolean).map(t => `<span class="tag">${t}</span>`).join('');
-            contentEl.innerHTML = mdToHtml(body); rawLink.href = path;
+            contentEl.innerHTML = mdToHtml(body);
             listEl.hidden = true; viewEl.hidden = false;
             if (!location.hash.startsWith('#post=')) history.pushState({ post: path }, '', `#post=${encodeURIComponent(path)}`);
             viewEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          } catch(err){ window.open(path, '_blank'); }
+          } catch(err){ alert('Could not load post.'); }
         }
         function hidePost(){ viewEl.hidden = true; listEl.hidden = false; }
         listEl.addEventListener('click', (e) => { const btn = e.target.closest('.read-post'); if (btn){ e.preventDefault(); showPost(btn.dataset.path); } }, true);
