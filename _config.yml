@@ -1,0 +1,7 @@
+title: Thomas Rolland — AI Research
+description: Personal website and blog
+markdown: kramdown
+permalink: /blog/:title/
+excerpt_separator: "<!--more-->"
+timezone: Europe/Lisbon
+plugins: []
