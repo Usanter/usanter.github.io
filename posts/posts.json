@@ -5,5 +5,19 @@
     "date": "2025-09-02",
     "summary": "Pastel liquid background with a tiny shader and accessibility.",
     "tags": ["design", "webgl", "threejs", "shaders"]
+  },
+  {
+    "path": "ai-transformers-friendly-tour.md",
+    "title": "Understanding Transformers: A Friendly Tour",
+    "date": "2025-09-02",
+    "summary": "An intuitive walk from tokens to attention heads with minimal math.",
+    "tags": ["ai", "transformers", "attention"]
+  },
+  {
+    "path": "ai-small-llms-on-a-budget.md",
+    "title": "Small LLMs on a Budget: Practical Tips",
+    "date": "2025-09-02",
+    "summary": "Running, fine-tuning, and serving compact models without drama.",
+    "tags": ["ai", "llm", "efficiency", "inference"]
   }
 ]
