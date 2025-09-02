@@ -1,7 +1,7 @@
 ---
 title: Building a Soft Liquid Gradient Background with Three.js
 date: 2025-09-02
-summary: How the site’s pastel, liquid background works, with a tiny Three.js shader, soft palette tuning, and accessibility considerations.
+summary: Pastel liquid background with a tiny shader and accessibility.
 tags: design, webgl, threejs, shaders
 ---
 
@@ -23,8 +23,6 @@ Open `index.html` and you’ll see the animated canvas layer (`#liquid-bg`) sitt
 ## The Palette
 
 Colors are set in a small config, then passed to the shader.
-
-Source: `index.html:296`
 
 ```js
 const CONFIG = {
@@ -49,10 +47,6 @@ The fragment shader combines:
 - Five moving metaballs to generate an organic scalar field.
 - A multi‑stop color mix function.
 
-Anchors: `index.html:317` (shader start), `index.html:327` (color mixing), `index.html:345` (metaball field), `index.html:361` (final color).
-
-Key excerpt:
-
 ```glsl
 uniform vec3 uColors[5];
 
@@ -72,15 +66,13 @@ Why this feels soft:
 
 ## Performance & Quality
 
-- Device pixel ratio is capped for efficiency (`dprMax`). `index.html:305`.
+- Device pixel ratio is capped for efficiency (`dprMax`).
 - Grain is minimal (`grain: 0.008`) to reduce banding without visible noise.
-- The canvas clears to white to blend with the UI (`renderer.setClearColor(0xffffff, 1)`). `index.html:307`.
+- The canvas clears to white to blend with the UI.
 
 ## Accessibility
 
 We respect reduced motion preferences by scaling speed down when requested.
-
-Anchor: `index.html:395`
 
 ```js
 const media = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -92,8 +84,6 @@ function updateSpeed(){
 ## The Foreground “Glass” Aesthetic
 
 The canvas sits under soft glass cards and a header. Background splashes are also painted with radial CSS gradients for depth.
-
-Anchors: `index.html:25`–`index.html:31` (CSS backdrop), `index.html:33` (`#liquid-bg`).
 
 ```css
 .backdrop {
@@ -115,10 +105,7 @@ Anchors: `index.html:25`–`index.html:31` (CSS backdrop), `index.html:33` (`#li
 
 If you want to reuse the effect elsewhere:
 
-1) Copy the `<canvas id="liquid-bg">` element and the `<script type="module">` block from `index.html:291` onward.
+1) Copy the `<canvas id="liquid-bg">` element and the `<script type="module">` block from the homepage.
 2) Keep the CSS for `#liquid-bg` and the `.backdrop` layer for depth.
 3) Adjust `CONFIG` to match your brand palette.
 
-## Closing Notes
-
-This effect aims to be soothing rather than distracting. It’s lightweight, responsive, and accessible by default — and you can retune it in under a minute via `CONFIG`.

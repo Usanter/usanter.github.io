@@ -231,10 +231,10 @@
 
           </article>
           <article class="project card">
-            <div class="topline"><span class="pill">NLP & Speech processing</span><span class="pill">★</span></div>
-            <h3>Post-training strategies</h3>
-            <p>Exploring transfer learning, fine-tuning, and domain adaptation methods to enhance the adaptability and robustness of ASR and large language models (LLMs).</p>
-            <div class="tags"><span class="tag">PEFT</span><span class="tag">RLHF</span></div>
+            <div class="topline"><span class="pill">NLP & Speech processing</span><span class="pill"></span></div>
+            <h3>Looped-Transformer</h3>
+            <p>Exploring Exploring Transformer variant that uses loop mechanism for parameter-efficiency.</p>
+            <div class="tags"><span class="tag">Pretraining</span><span class="tag">Parameter-Efficiency</span></div>
           </article>
         </div>
       </section>
@@ -399,7 +399,7 @@
   <!-- Simple client-side blog list from Markdown files -->
   <script>
     (async function(){
-      let posts = [ { path: 'blog-soft-liquid-gradient.md' } ];
+      let posts = [ { path: 'posts/markdown/blog-soft-liquid-gradient.md' } ];
       // Try loading a manifest if present
       try {
         const res = await fetch('posts/posts.json', { cache: 'no-store' });
@@ -446,13 +446,9 @@
       function renderCard({ title, date, summary, path, tags }){
         const article = document.createElement('article');
         article.className = 'project card';
-        const tagsHtml = (tags||'').split(',').map(t => t.trim()).filter(Boolean).map(t => `<span class="tag">${t}</span>`).join('');
         article.innerHTML = `
           <div class="topline"><span class="pill">${date || ''}</span><span class="pill">Blog</span></div>
-          <h3>${title || path}</h3>
-          <p>${summary || ''}</p>
-          ${tagsHtml ? `<div class=\"tags\">${tagsHtml}</div>` : ''}
-          <div class="actions"><button class="btn read-post" data-path="${path}">Read</button><a class="btn" href="${path}" target="_blank" rel="noopener">Raw (.md)</a></div>
+          <h3><a href="#" class="open-post" data-path="${path}" style="text-decoration:none; color:inherit;">${title || path}</a></h3>
         `;
         return article;
       }
@@ -551,7 +547,7 @@
       // Cards already include a Read button created by the first script
 
       listEl.addEventListener('click', (e) => {
-        const btn = e.target.closest('.read-post'); if (btn){ e.preventDefault(); showPost(btn.dataset.path); }
+        const btn = e.target.closest('.read-post, .open-post'); if (btn){ e.preventDefault(); showPost(btn.dataset.path); }
       }, true);
       backBtn?.addEventListener('click', () => { hidePost(); history.pushState({}, '', '#blog'); });
       window.addEventListener('hashchange', () => { const m = location.hash.match(/#post=([^&]+)/); if (m) showPost(decodeURIComponent(m[1])); else hidePost(); });
