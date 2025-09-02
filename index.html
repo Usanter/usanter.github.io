@@ -246,20 +246,17 @@
           <p>Explainers & deep dives</p>
         </div>
         <div class="cta-row"><a class="btn" href="posts.html">View all posts</a></div>
-        <div class="grid-3">
-          {% assign recent = site.posts | slice: 0, 2 %}
-          {% for post in recent %}
-          <article class="project card">
-            <div class="topline"><span class="pill">{{ post.date | date: "%Y-%m-%d" }}</span><span class="pill">Blog</span></div>
-            <h3><a href="{{ post.url }}" style="text-decoration:none; color:inherit;">{{ post.title }}</a></h3>
-            {% if post.summary %}<p>{{ post.summary }}</p>{% else %}<p>{{ post.excerpt | strip_html | truncate: 140 }}</p>{% endif %}
-            {% if post.tags %}
-              <div class="tags">{% for t in post.tags %}<span class="tag">{{ t }}</span>{% endfor %}</div>
-            {% endif %}
-            <div class="actions"><a class="btn" href="{{ post.url }}">Read</a></div>
-          </article>
-          {% endfor %}
-        </div>
+        <div id="blog-list" class="grid-3" data-source="md"></div>
+        <article id="post-view" class="post card" hidden>
+          <div class="topline"><span class="pill" id="post-date"></span><span class="pill">Blog</span></div>
+          <h2 class="post-title" id="post-title"></h2>
+          <div class="tags" id="post-tags"></div>
+          <div class="prose" id="post-content"></div>
+          <div class="actions">
+            <button class="btn" id="post-back" type="button">← Back to posts</button>
+            <a class="btn" id="post-raw" href="#" target="_blank" rel="noopener">Open raw (.md)</a>
+          </div>
+        </article>
       </section>
 
       <section id="contact">
