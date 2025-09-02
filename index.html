@@ -398,7 +398,7 @@
           posts = list
             .map(p => ({ path: p.path, title: p.title, date: p.date, summary: p.summary, tags: Array.isArray(p.tags)? p.tags.join(', '): p.tags }))
             .sort((a,b) => String(b.date||'').localeCompare(String(a.date||'')))
-            .slice(0, 2); // show a couple on the homepage
+            .slice(0, 3); // show the latest three on the homepage
         }
       } catch (_) { /* ignore; fallback to default */ }
       const el = document.getElementById('blog-list');

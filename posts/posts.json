@@ -1,5 +1,12 @@
 [
   {
+    "path": "posts/markdown/hello-world.md",
+    "title": "Hello World — First Post",
+    "date": "2025-09-03",
+    "summary": "A tiny hello world post to demo the blog flow.",
+    "tags": ["intro", "demo"]
+  },
+  {
     "path": "posts/markdown/blog-soft-liquid-gradient.md",
     "title": "Building a Soft Liquid Gradient Background with Three.js",
     "date": "2025-09-02",
