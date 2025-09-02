@@ -129,7 +129,7 @@
           <a href="publications.html">Publications</a>
           <a href="activities.html">Activities</a>
           <a href="teaching.html">Teaching</a>
-          <a href="#blog">Blog</a>
+          <a href="posts.html">Blog</a>
           <a href="#contact">Contact</a>
         </nav>
       </header>
@@ -405,7 +405,10 @@
         const res = await fetch('posts/posts.json', { cache: 'no-store' });
         if (res.ok) {
           const list = await res.json();
-          posts = list.map(p => ({ path: p.path, title: p.title, date: p.date, summary: p.summary, tags: Array.isArray(p.tags)? p.tags.join(', '): p.tags }));
+          posts = list
+            .map(p => ({ path: p.path, title: p.title, date: p.date, summary: p.summary, tags: Array.isArray(p.tags)? p.tags.join(', '): p.tags }))
+            .sort((a,b) => String(b.date||'').localeCompare(String(a.date||'')))
+            .slice(0, 2); // show a couple on the homepage
         }
       } catch (_) { /* ignore; fallback to default */ }
       const el = document.getElementById('blog-list');
